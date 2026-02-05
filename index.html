@@ -1,121 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>For Emmie Rose 💖</title>
+  <meta charset="UTF-8">
+  <title>SNHS Confession</title>
   <style>
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #2b0f2f, #4b1d4e);
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: #fff;
-      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: navajowhite;
+      padding: 20px;
     }
 
-    .card {
-      position: relative;
-      max-width: 420px;
-      width: 92vw;
-      padding: 32px 26px 36px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.45);
+    h1 {
       text-align: center;
-      animation: float 6s ease-in-out infinite;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+    .box {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     }
 
-    h1 { font-size: 26px; margin-bottom: 10px; }
-    .name { color: #ffb3e6; }
-    p { font-size: 16px; line-height: 1.7; margin: 16px 0; }
-
-    .heart { font-size: 34px; animation: pulse 1.5s infinite; margin: 14px 0; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-
-    .buttons { display: flex; gap: 14px; justify-content: center; margin-top: 22px; position: relative; }
-    button { padding: 12px 20px; border-radius: 999px; border: none; cursor: pointer; font-size: 15px; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
-
-    .yes { background: linear-gradient(135deg, #ff4d8d, #ff7ab8); color: #fff; box-shadow: 0 10px 20px rgba(255,77,141,0.4); }
-    .no { background: rgba(255,255,255,0.15); color: #fff; }
-    button:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.3); }
-
-    .response { margin-top: 20px; font-size: 17px; opacity: 0; transition: opacity 0.5s; }
-    .response.show { opacity: 1; }
-
-    .bg-heart { 
-      position: absolute; 
-      animation: rise 10s linear infinite; 
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
     }
-    @keyframes rise { 
-      from { transform: translateY(100vh) scale(0.8); } 
-      to { transform: translateY(-10vh) scale(1.2); } 
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    textarea {
+      resize: none; 
+      height: 80px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: black;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .leaderboard {
+      max-width: 500px;
+      margin: 30px auto;
+    }
+
+    .confession {
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+    }
+
+    .time {
+      font-size: 12px;
+      color: gray;
+    }
+
+    .tag {
+      text-align: right;
+      font-style: italic;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Hi <span class="name">Emmie Rose</span> 🌹</h1>
-    <p>since wala kaming valentines. and kung gusto mo lang naman.</p>
-    <p>tara dagat? tambay lang as friends nothing much. :></p>
-    <div class="heart">💗</div>
 
-    <div class="buttons">
-      <button class="yes" onclick="sayYes()">taraaa 💕</button>
-      <button class="no" id="noButton" onmouseenter="moveButton()">ih 🙈</button>
-    </div>
+  <h1>SNHS CONFESSION</h1>
 
-    <div class="response" id="response"></div>
+  <div class="box">
+    <label>Your Name:</label>
+    <input type="text" id="name" placeholder="Name">
+
+    <label>To:</label>
+    <input type="text" id="to" placeholder="Confession to">
+
+    <label>Message:</label>
+    <textarea id="message" placeholder="Write your confession..."></textarea>
+
+    <button onclick="sendConfession()">Send Confession</button>
+
+    <div class="tag">– By:Jhay Frm 9 platinum </div>
+
+  </div>
+
+  <div class="leaderboard">
+    <h2>Confession Board</h2>
+    <div id="list"></div>
   </div>
 
   <script>
-    const response = document.getElementById('response');
-    const noButton = document.getElementById('noButton');
+    let confessions = JSON.parse(localStorage.getItem("confessions")) || [];
 
-    function sayYes() {
-      response.textContent = "Yun oh! tara tara 🌷";
-      response.classList.add('show');
+    function sendConfession() {
+      let name = document.getElementById("name").value;
+      let to = document.getElementById("to").value;
+      let message = document.getElementById("message").value;
+
+      if (name === "" || to === "" || message === "") {
+        alert("Sagutan mo lahat boii");
+        return;
+      }
+
+      let time = new Date().toLocaleString();
+
+      confessions.unshift({
+        name: name,
+        to: to,
+        message: message,
+        time: time
+      });
+
+      localStorage.setItem("confessions", JSON.stringify(confessions));
+
+      document.getElementById("name").value = "";
+      document.getElementById("to").value = "";
+      document.getElementById("message").value = "";
+
+      displayConfessions();
     }
 
-    function moveButton() {
-      const x = Math.random() * 60 - 30; // shift -30px to +30px
-      const y = Math.random() * 60 - 30;
-      noButton.style.transform = `translate(${x}px, ${y}px)`;
+    function displayConfessions() {
+      let list = document.getElementById("list");
+      list.innerHTML = "";
+
+      confessions.forEach(c => {
+        list.innerHTML += `
+          <div class="confession">
+            <strong>${c.name}</strong>
+            <div><b>To:</b> ${c.to}</div>
+            <p>${c.message}</p>
+            <div class="time">${c.time}</div>
+          </div>
+        `;
+      });
     }
 
-    
-    for (let i = 0; i < 14; i++) {
-      const h = document.createElement('div');
-      h.className = 'bg-heart';
-      h.textContent = '💖';
-      h.style.left = Math.random() * 100 + 'vw';
-      h.style.animationDelay = Math.random() * 10 + 's';
-      h.style.fontSize = 14 + Math.random() * 20 + 'px';
-      h.style.opacity = 0.25 + Math.random() * 0.3;
-      document.body.appendChild(h);
-    }
-
-    
-    const flowers = ['🌷', '🌸'];
-    for (let i = 0; i < 12; i++) {
-      const f = document.createElement('div');
-      f.className = 'bg-heart';
-      f.textContent = flowers[Math.floor(Math.random() * flowers.length)];
-      f.style.left = Math.random() * 100 + 'vw';
-      f.style.animationDelay = Math.random() * 12 + 's';
-      f.style.fontSize = 16 + Math.random() * 24 + 'px';
-      f.style.opacity = 0.3 + Math.random() * 0.3;
-      document.body.appendChild(f);
-    }
+    displayConfessions();
   </script>
+
 </body>
 </html>
